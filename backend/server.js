@@ -2,10 +2,13 @@ import express from "express"
 import mongoose from "mongoose"
 import cors from "cors"
 import dotenv from "dotenv"
+import swaggerUi from "swagger-ui-express"
+import swaggerSpec from "./swagger.js"
 
 import userRouter from "./routes/userRoute.js"
 import taskRouter from "./routes/taskRoute.js"
 import forgotPasswordRouter from "./routes/forgotPassword.js"
+import chalk from "chalk";
 
 //app config
 dotenv.config()
@@ -24,9 +27,16 @@ mongoose.connect(process.env.MONGO_URI, {
     if (err) {
         console.log(err)
     } else {
-        console.log("DB Connected")
+        console.log(chalk.white.bgBlueBright.bold("DB Connected"))
     }
 })
+
+//swagger
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+
+console.log(
+    `Swagger UI available at ${chalk.blue.bgRed.bold(`http://localhost:${port}/swagger`)}`
+);
 
 //api endpoints
 app.use("/api/user", userRouter)

@@ -43,7 +43,7 @@ const registerUser = async (req,res) => {
         if(exists){
             return res.status(400).json({message: "User already exists"})
         }
-        if (validator.isEmpty(name) || validator.isEmpty(email) || validator.isEmpty(password)) {
+        if (!name || !email || !password) {
             return res.status(400).json({message: "Please enter all fields"})
         }
         if(!validator.isEmail(email)){
