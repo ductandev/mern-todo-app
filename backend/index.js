@@ -22,20 +22,20 @@ app.use(cors())
 
 //db config
 mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
+  useNewUrlParser: true,
 }, (err) => {
-    if (err) {
-        console.log(err)
-    } else {
-        console.log(chalk.white.bgBlueBright.bold("DB Connected"))
-    }
+  if (err) {
+    console.log(err)
+  } else {
+    console.log(chalk.white.bgBlueBright.bold("DB Connected"))
+  }
 })
 
 //swagger
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 console.log(
-    `Swagger UI available at ${chalk.blue.bgRed.bold(`http://localhost:${port}/swagger`)}`
+  `Swagger UI available at ${chalk.blue.bold(`${process.env.URL}:${port}/swagger`)}`
 );
 
 //api endpoints

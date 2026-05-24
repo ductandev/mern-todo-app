@@ -1,4 +1,8 @@
 import swaggerJsdoc from "swagger-jsdoc";
+import dotenv from "dotenv";
+
+dotenv.config();
+const port = process.env.PORT || 8000;
 
 const options = {
   definition: {
@@ -8,7 +12,7 @@ const options = {
       version: "1.0.0",
       description: "API documentation for MERN Todo App",
     },
-    servers: [{ url: "http://localhost:8000" }],
+    servers: [{ url: `${process.env.URL}:${port}` }],
     components: {
       securitySchemes: {
         bearerAuth: {
