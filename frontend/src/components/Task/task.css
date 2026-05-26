@@ -1,4 +1,1 @@
-.task-info{
-    text-justify: distribute;
-    word-wrap: break-word;
-}
+/* All styles migrated to Tailwind utilities in Task.jsx */

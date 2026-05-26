@@ -1,55 +1,88 @@
-import React from 'react';
-import moment from 'moment';
-import "./task.css";
-import { useContext } from 'react';
-import TaskContext from '../../context/TaskContext';
-import DeleteIcon from '@mui/icons-material/Delete';
+import React, { useContext } from "react";
+import moment from "moment";
+import TaskContext from "../../context/TaskContext";
+
 function Task({ task, id }) {
-    const { dispatch } = useContext(TaskContext);
+  const { dispatch } = useContext(TaskContext);
 
-    const handleRemove = (e) => {
-        e.preventDefault();
-        
+  const handleRemove = (e) => {
+    e.preventDefault();
+    dispatch({ type: "REMOVE_TASK", id });
+  };
 
-        dispatch({
-            type: "REMOVE_TASK",
-            id
-        })
-    }
+  const handleMarkDone = () => {
+    dispatch({ type: "MARK_DONE", id });
+  };
 
-    const handleMarkDone = (e) => {
-        dispatch({
-            type: "MARK_DONE",
-            id
-        })
-    }
-    return (
-        <div className='bg-slate-300 py-4 rounded-lg shadow-md flex items-center justify-center gap-2 mb-3'>
-            <div className="mark-done">
-                <input type="checkbox" className="checkbox" onChange={handleMarkDone} checked={task.completed} />
-            </div>
-            <div className="task-info text-slate-900 text-sm w-10/12">
-                <h4 className="task-title text-lg capitalize">{task.title}</h4>
-                <p className="task-description">{task.description}</p>
-                <div className=' italic opacity-60'>
-                    {
-                        task?.createdAt ? (
-                            <p>{moment(task.createdAt).fromNow()}</p>
-                        ) : (
-                            <p>just now</p>
-                        )
-                    }
-                </div>
-            </div>
-            <div className="remove-task text-sm text-white">
-                <DeleteIcon
-                    style={{ fontSize: 30, cursor: "pointer" }}
-                    size="large"
-                    onClick={handleRemove}
-                    className="remove-task-btn bg-blue-700 rounded-full border-2 shadow-2xl border-white p-1" />
-            </div>
-        </div>
-    );
+  return (
+    <div className="group flex items-start gap-3 p-4 rounded-xl border border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-soft transition-all animate-slide-up">
+      <label className="relative flex items-center justify-center mt-0.5 cursor-pointer">
+        <input
+          type="checkbox"
+          className="peer sr-only"
+          onChange={handleMarkDone}
+          checked={task.completed}
+        />
+        <span className="w-5 h-5 rounded-md border-2 border-zinc-300 peer-checked:bg-brand-600 peer-checked:border-brand-600 transition-colors flex items-center justify-center">
+          {task.completed && (
+            <svg
+              className="w-3 h-3 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={3}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          )}
+        </span>
+      </label>
+
+      <div className="flex-1 min-w-0">
+        <h4
+          className={`text-sm font-medium capitalize break-words ${
+            task.completed ? "text-zinc-400 line-through" : "text-zinc-900"
+          }`}
+        >
+          {task.title}
+        </h4>
+        <p
+          className={`text-sm mt-0.5 break-words ${
+            task.completed ? "text-zinc-400" : "text-zinc-600"
+          }`}
+        >
+          {task.description}
+        </p>
+        <p className="text-xs text-zinc-400 mt-2">
+          {task?.createdAt ? moment(task.createdAt).fromNow() : "just now"}
+        </p>
+      </div>
+
+      <button
+        onClick={handleRemove}
+        aria-label="Delete task"
+        className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-all"
+      >
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3"
+          />
+        </svg>
+      </button>
+    </div>
+  );
 }
 
 export default Task;
