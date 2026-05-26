@@ -12,7 +12,11 @@ const options = {
       version: "1.0.0",
       description: "API documentation for MERN Todo App",
     },
-    servers: [{ url: `${process.env.URL}:${port}` }],
+    servers: [
+      {
+        url: process.env.PUBLIC_URL || `${process.env.URL}:${port}`,
+      },
+    ],
     components: {
       securitySchemes: {
         bearerAuth: {
