@@ -18,7 +18,7 @@ jobs:
           key: ${{ secrets.VPS_KEY }}
           port: ${{ secrets.VPS_PORT }}
           script: |
-            cd /root/dockers
+            cd /root//mern-todo-app
             git pull
             docker-compose up -d --build --remove-orphans frontend-react
             docker images -f "dangling=true" -q | xargs --no-run-if-empty docker rmi
