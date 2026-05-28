@@ -18,7 +18,7 @@ pipeline {
                     sh """
                         ssh -o StrictHostKeyChecking=no -i ${KEY} ${SSH_USER}@${VPS_IP} '
                         cd ${DEPLOY_PATH} && git pull
-                        docker compose up -d --build --remove-orphans backend-express
+                        docker-compose up -d --build --remove-orphans backend-express
                         '
                     """
                   }

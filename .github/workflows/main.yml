@@ -20,7 +20,7 @@ jobs:
           script: |
             cd /root//mern-todo-app
             git pull
-            docker compose up -d --build --remove-orphans frontend-react
+            docker-compose up -d --build --remove-orphans frontend-react
             docker images -f "dangling=true" -q | xargs --no-run-if-empty docker rmi
 
 #================================
