@@ -38,7 +38,7 @@ const BUILD_COMMIT = process.env.BUILD_COMMIT || "unknown";
  *                 uptime:
  *                   type: number
  */
-router.get("/buildSuccess", (_req, res) => {
+router.get("/build", (_req, res) => {
   res.status(200).json({
     status: "ok",
     message: "Build deployed successfully",
