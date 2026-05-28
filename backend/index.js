@@ -8,6 +8,7 @@ import swaggerSpec from "./swagger.js"
 import userRouter from "./routes/userRoute.js"
 import taskRouter from "./routes/taskRoute.js"
 import forgotPasswordRouter from "./routes/forgotPassword.js"
+import testRouter from "./routes/testRoute.js"
 import chalk from "chalk";
 
 //app config
@@ -42,6 +43,7 @@ console.log(
 app.use("/api/user", userRouter)
 app.use("/api/task", taskRouter)
 app.use("/api/forgotPassword", forgotPasswordRouter)
+app.use("/api/test", testRouter)
 
 //listen
 app.listen(port, () => console.log(`Listening on localhost:${port}`))
