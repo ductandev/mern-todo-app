@@ -8,7 +8,7 @@ const BUILD_COMMIT = process.env.BUILD_COMMIT || "unknown";
 
 /**
  * @swagger
- * /api/test/buildSuccess:
+ * /api/test/build:
  *   get:
  *     summary: Health check — xác nhận build và deploy thành công
  *     tags: [Test]
