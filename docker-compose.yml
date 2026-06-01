@@ -29,7 +29,7 @@ services:
         # đợi MongoDB sẵn sàng accept connection rồi Backend mới start. nếu ko có điều kiện này, Backend có thể start trước → connect fail → restart loop → may rủi.
         condition: service_healthy
     ports:
-      - 8386:8386
+      - 8300:8386
 
   frontend-react:
     container_name: frontend-react
