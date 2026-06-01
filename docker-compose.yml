@@ -26,7 +26,8 @@ services:
       - ./.env
     depends_on:
       mongo:
-        condition: service_healthy # đợi MongoDB sẵn sàng accept connection rồi Backend mới start. nếu ko có điều kiện này, Backend có thể start trước → connect fail → restart loop → may rủi.
+        # đợi MongoDB sẵn sàng accept connection rồi Backend mới start. nếu ko có điều kiện này, Backend có thể start trước → connect fail → restart loop → may rủi.
+        condition: service_healthy
     ports:
       - 9090:9090
 
