@@ -10,7 +10,7 @@ services:
     volumes:
       - mongo-data:/data/db
     ports:
-      - "127.0.0.1:27017:27017" #Bảo mật MongoDB chỉ cho phép truy cập từ localhost
+      - "27017:27017"
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -23,21 +23,17 @@ services:
     build: ./backend
     restart: unless-stopped
     env_file:
-      - ./backend/.env
+      - ./.env
     depends_on:
       mongo:
         condition: service_healthy # đợi MongoDB sẵn sàng accept connection rồi Backend mới start. nếu ko có điều kiện này, Backend có thể start trước → connect fail → restart loop → may rủi.
-    # expose:
-    #   - "9090" # Security: chỉ accessible nội bộ giữa các container
     ports:
-      - 9090:9090 # chỉ cần expose cổng 9090 để Nginx Proxy Manager có thể kết nối, không cần publish ra host
+      - 9090:9090
 
   frontend-react:
     container_name: frontend-react
     build: ./frontend
     restart: unless-stopped
-    # expose:
-    #   - "80"
     ports:
       - 5173:80
 
