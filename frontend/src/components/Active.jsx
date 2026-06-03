@@ -32,8 +32,8 @@ function Active() {
   return (
     <div className="space-y-2.5">
       {tasks.map(
-        (task, index) =>
-          !task.completed && <Task key={index} task={task} id={index} />
+        (task) =>
+          !task.completed && <Task key={task._id} task={task} />
       )}
     </div>
   );

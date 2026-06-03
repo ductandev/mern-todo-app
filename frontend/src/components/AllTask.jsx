@@ -34,8 +34,8 @@ function AllTask() {
 
   return (
     <div className="space-y-2.5">
-      {tasks.map((task, index) => (
-        <Task key={index} task={task} id={index} />
+      {tasks.map((task) => (
+        <Task key={task._id} task={task} />
       ))}
     </div>
   );

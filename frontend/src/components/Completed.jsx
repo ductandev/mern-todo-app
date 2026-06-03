@@ -35,7 +35,7 @@ function Completed() {
     <div className="space-y-2.5">
       {tasks.map(
         (task, index) =>
-          task.completed && <CompletedTask key={index} task={task} id={index} />
+          task.completed && <CompletedTask key={task._id} task={task} />
       )}
     </div>
   );

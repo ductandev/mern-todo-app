@@ -1,5 +1,5 @@
 import express from "express"
-import { addTask, getTask, removeTask} from "../controllers/taskController.js"
+import { addTask, getTask, removeTask, updateTask } from "../controllers/taskController.js"
 import requireAuth from "../middleware/requireAuth.js";
 const router = express.Router();
 
@@ -60,6 +60,7 @@ router.get("/getTask",requireAuth, getTask)
  *       200:
  *         description: Task đã xóa
  */
-router.get("/removeTask",requireAuth, removeTask)
+router.delete("/removeTask/:id", requireAuth, removeTask)
+router.put("/updateTask/:id", requireAuth, updateTask)
 
 export default router;

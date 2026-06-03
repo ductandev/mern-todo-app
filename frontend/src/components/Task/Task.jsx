@@ -1,17 +1,36 @@
 import React, { useContext } from "react";
 import moment from "moment";
 import TaskContext from "../../context/TaskContext";
+import TokenContext from "../../context/TokenContext";
+import axios from "../../Axios/axios.js";
 
-function Task({ task, id }) {
+function Task({ task }) {
   const { dispatch } = useContext(TaskContext);
+  const { userToken } = useContext(TokenContext);
 
-  const handleRemove = (e) => {
+  const handleRemove = async (e) => {
     e.preventDefault();
-    dispatch({ type: "REMOVE_TASK", id });
+    try {
+      await axios.delete(`/task/removeTask/${task._id}`, {
+        headers: { Authorization: `Bearer ${userToken}` },
+      });
+      dispatch({ type: "REMOVE_TASK", id: task._id });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleMarkDone = () => {
-    dispatch({ type: "MARK_DONE", id });
+  const handleMarkDone = async () => {
+    try {
+      await axios.put(
+        `/task/updateTask/${task._id}`,
+        { completed: !task.completed },
+        { headers: { Authorization: `Bearer ${userToken}` } }
+      );
+      dispatch({ type: "MARK_DONE", id: task._id });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

@@ -45,11 +45,18 @@ const addTask = async (req, res) => {
         )
 }
 const removeTask = (req, res) => {
-    const { id } = req.body;
-    console.log("id: ", id);
+    const { id } = req.params;
     taskModel.findByIdAndDelete(id)
         .then(() => res.status(200).json({ message: "Task deleted successfully" }))
         .catch((error) => res.status(501).json({ message: error.message }))
+}
+
+const updateTask = (req, res) => {
+    const { id } = req.params;
+    const { completed } = req.body;
+    taskModel.findByIdAndUpdate(id, { completed }, { new: true })
+        .then((data) => res.status(200).json(data))
+        .catch((error) => res.status(500).json({ message: error.message }))
 }
 
 const getTask = (req, res) => {
@@ -57,4 +64,4 @@ const getTask = (req, res) => {
         .then((data) => res.status(200).json(data))
         .catch((error) => res.status(501).json({ message: error.message }))
 }
-export { addTask, getTask,removeTask }
+export { addTask, getTask, removeTask, updateTask }
