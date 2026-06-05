@@ -1,3 +1,7 @@
+global:
+  scrape_interval: 15s #[mỗi 15s]──► mongodb-exporter:9216/metrics && [mỗi 15s]──► node-exporter:9100/metrics
+  evaluation_interval: 15s #[mỗi 15s]──► kiểm tra alert-rules.yml → có vi phạm không?
+
 scrape_configs:
   - job_name: mongodb
     static_configs:
