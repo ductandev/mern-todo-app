@@ -24,3 +24,9 @@ yarn-debug.log*
 yarn-error.log*
 yarn.lock
 
+# terraform install artifacts (downloaded by bash.sh)
+terraform
+terraform_*.zip
+LICENSE.txt
+.wget-hsts
+

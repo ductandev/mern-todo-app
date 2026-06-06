@@ -10,7 +10,7 @@ terraform {
   required_providers {
     digitalocean = {
       source  = "digitalocean/digitalocean"
-      version = "2.81.0"
+      version = "2.87.0"
     }
   }
 }
@@ -23,17 +23,12 @@ resource "digitalocean_droplet" "web" {
   image   = "ubuntu-24-04-x64"
   name    = "terraform-vps"
   region  = "sgp1"
-  size    = "s-1vcpu-1gb"
+  size    = "s-2vcpu-4gb-120gb-intel"
   ssh_keys = [var.ssh_key]
-  # backups = true
-  # backup_policy {
-  #   plan = "weekly"
-  #   weekday = "monday"
-  #   hour = 8
-  # }
 }
 
 output "output_name" {
+  # value = [var.do_token, var.ssh_key]
   value = {
     ipVps: digitalocean_droplet.web.ipv4_address
   }
