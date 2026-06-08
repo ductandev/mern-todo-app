@@ -36,3 +36,7 @@ LICENSE.txt
 
 
 ssh-key-digital-ocean
+
+
+bash_backup copy.sh
+bash_backup.sh

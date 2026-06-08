@@ -1,8 +1,8 @@
 global:
   smtp_smarthost: "smtp.gmail.com:587"
-  smtp_from: "sangrom2003@gmail.com"
-  smtp_auth_username: "sangrom2003@gmail.com"
-  smtp_auth_password: "vtourjrxugjabfpr"
+  smtp_from: "daotaotainangtrevn@gmail.com"
+  smtp_auth_username: "daotaotainangtrevn@gmail.com"
+  smtp_auth_password: "ydxqhplabwneairy"
   smtp_require_tls: true
 
 route:
@@ -11,5 +11,5 @@ route:
 receivers:
   - name: "email-alert"
     email_configs:
-      - to: "sangrom2003@gmail.com"
+      - to: "daotaotainangtrevn@gmail.com"
         send_resolved: true
