@@ -8,7 +8,7 @@ const BUILD_COMMIT = process.env.BUILD_COMMIT || "unknown";
 
 /**
  * @swagger
- * /api/test/build:
+ * /api/test/buildTest:
  *   get:
  *     summary: Health check — xác nhận build và deploy thành công
  *     tags: [Test]
@@ -38,7 +38,7 @@ const BUILD_COMMIT = process.env.BUILD_COMMIT || "unknown";
  *                 uptime:
  *                   type: number
  */
-router.get("/build", (_req, res) => {
+router.get("/buildTest", (_req, res) => {
   res.status(200).json({
     status: "ok",
     message: "Build deployed successfully",
