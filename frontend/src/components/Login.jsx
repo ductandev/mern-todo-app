@@ -37,7 +37,7 @@ function Login() {
         <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-card border border-zinc-200/70 p-8">
           <div className="mb-8">
             <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
-              Welcome back Ductandev 🎄
+              Welcome back Ductandev 🚀 🎄
             </h1>
             <p className="text-sm text-zinc-500 mt-1">
               Sign in to continue managing your tasks.
