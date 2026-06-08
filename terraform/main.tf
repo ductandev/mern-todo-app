@@ -1,10 +1,13 @@
 variable "do_token" {
   description = "đây là token cho phép terraform truy cập vào tài khoản DigitalOcean"
+  sensitive = true    # ẩn giá trị nhạy cảm khi hiển thị ra màn hình
 }
 
-variable "ssh_key" {
-  description = "đây là SSH key để terraform có thể truy cập vào droplet"
+variable "ssh_key_fingerprint" {
+  description = "đây là fingerprint của khóa SSH được sử dụng để truy cập vào VPS"
+  sensitive = true    # ẩn giá trị nhạy cảm khi hiển thị ra màn hình
 }
+
 
 terraform {
   required_providers {
@@ -16,20 +19,22 @@ terraform {
 }
 
 provider "digitalocean" {
-    token = var.do_token
+  token = var.do_token
 }
 
-resource "digitalocean_droplet" "web" {
-  image   = "ubuntu-24-04-x64"
-  name    = "terraform-vps"
-  region  = "sgp1"
-  size    = "s-2vcpu-4gb-120gb-intel"
-  ssh_keys = [var.ssh_key]
+resource "digitalocean_droplet" "vps" {
+  image  = "ubuntu-24-04-x64"
+  name   = "terraform-vps"
+  region = "sgp1"
+  size   = "s-2vcpu-4gb-120gb-intel"
+
+  ssh_keys = [
+    var.ssh_key_fingerprint
+  ]
 }
 
-output "output_name" {
-  # value = [var.do_token, var.ssh_key]
-  value = {
-    ipVps: digitalocean_droplet.web.ipv4_address
-  }
+output "vps_ip" {
+  value = digitalocean_droplet.vps.ipv4_address
 }
+
+

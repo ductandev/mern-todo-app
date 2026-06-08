@@ -27,6 +27,12 @@ yarn.lock
 # terraform install artifacts (downloaded by bash.sh)
 terraform
 terraform_*.zip
+terraform.tfvars
+*.tfstate
+*.tfstate.backup
+
 LICENSE.txt
 .wget-hsts
 
+
+ssh-key-digital-ocean

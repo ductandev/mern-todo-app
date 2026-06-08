@@ -1,0 +1,85 @@
+name: deploy FE
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - "terraform/**"
+      - ".github/workflows/main.yml"
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: terraform
+
+    outputs:
+      vps_ip: ${{ steps.output.outputs.vps_ip }}
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform init
+        run: terraform init
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan
+        run: terraform plan -var="ssh_key_fingerprint=${{ secrets.DO_SSH_KEY_FINGERPRINT }}"
+        env:
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+
+      - name: Terraform apply
+        run: terraform apply -auto-approve -var="ssh_key_fingerprint=${{ secrets.DO_SSH_KEY_FINGERPRINT }}"
+        env:
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+
+      - name: Get VPS IP
+        id: output
+        run: echo "vps_ip=$(terraform output -raw vps_ip)" >> $GITHUB_OUTPUT
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: terraform
+
+    steps:
+      - name: Deploy frontend on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ needs.terraform.outputs.vps_ip }}
+          username: ${{ vars.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            cd /root/mern-todo-app
+            git pull
+            docker-compose up -d --build --remove-orphans frontend-react
+            docker images -f "dangling=true" -q | xargs --no-run-if-empty docker rmi
+
+#================================
+#        Ghi chú thêm
+#================================
+# ✅ chỉ chạy khi FE thay đổi hoặc file workflow này thay đổi
+# paths:
+#   - "frontend/**"
+#   - ".github/workflows/main.yml"
+
+# ✅ Stop
+# docker-compose stop frontend-react
+
+# ✅ Start lại (không rebuild)
+# docker-compose start frontend-react
+
+# ✅ Stop + xóa container (chỉ service đó)
+# docker-compose rm -sf frontend-react
+
+# ✅ Rebuild + start lại
+#docker-compose up -d --build frontend-react
