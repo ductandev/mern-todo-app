@@ -1,0 +1,311 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1160" viewBox="0 0 1800 1160" role="img" aria-labelledby="title desc">
+  <title id="title">MERN Todo DevOps Platform on DigitalOcean</title>
+  <desc id="desc">Architecture diagram for MERN Todo app deployed on DigitalOcean VPS using Terraform, Ansible, Docker Compose, Jenkins, Prometheus and Grafana.</desc>
+  <defs>
+    <style>
+      .background { fill: #fafaf7; }
+      .title { font: 700 43px Arial, sans-serif; fill: #16181d; }
+      .subtitle { font: 400 18px Arial, sans-serif; fill: #5d6470; }
+      .label { font: 700 17px Arial, sans-serif; fill: #22262e; }
+      .layer { font: 700 22px Arial, sans-serif; fill: #16181d; }
+      .node-title { font: 700 16px Arial, sans-serif; fill: #151920; }
+      .node-text { font: 400 13px Arial, sans-serif; fill: #424a57; }
+      .small { font: 400 12px Arial, sans-serif; fill: #5a6270; }
+      .port { font: 700 12px Arial, sans-serif; fill: #26486e; }
+      .boundary { fill: #f2f5fb; stroke: #2f3640; stroke-width: 2; }
+      .do-cloud { fill: #f0f6ff; stroke: #0069ff; stroke-width: 2.5; stroke-dasharray: 9 7; }
+      .section { stroke: #89909b; stroke-width: 2; stroke-dasharray: 8 6; }
+      .node { fill: #ffffff; stroke: #303640; stroke-width: 1.8; }
+      .node-soft { fill: #fffaf2; stroke: #303640; stroke-width: 1.8; }
+      .node-blue { fill: #e6f0ff; stroke: #303640; stroke-width: 1.8; }
+      .node-green { fill: #e8f5ec; stroke: #303640; stroke-width: 1.8; }
+      .node-orange { fill: #fff0dc; stroke: #303640; stroke-width: 1.8; }
+      .node-purple { fill: #efe9ff; stroke: #303640; stroke-width: 1.8; }
+      .node-red { fill: #ffecec; stroke: #b55555; stroke-width: 1.6; }
+      .chip { fill: #eaf0f8; stroke: #b6c0d0; stroke-width: 1; }
+      .chip-manual { fill: #fff2d9; stroke: #d3a242; stroke-width: 1; }
+      .arrow { fill: none; stroke: #222833; stroke-width: 2.4; marker-end: url(#arrow); }
+      .arrow-blue { fill: none; stroke: #336fb5; stroke-width: 2.5; marker-end: url(#arrow-blue); }
+      .arrow-orange { fill: none; stroke: #c66b1b; stroke-width: 2.5; marker-end: url(#arrow-orange); }
+      .arrow-dash { fill: none; stroke: #626b78; stroke-width: 2.1; stroke-dasharray: 7 5; marker-end: url(#arrow-muted); }
+      .icon-circle { fill: #ffffff; stroke: #c2cad7; stroke-width: 1.2; }
+    </style>
+    <marker id="arrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#222833"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#336fb5"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#c66b1b"/>
+    </marker>
+    <marker id="arrow-muted" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#626b78"/>
+    </marker>
+  </defs>
+
+  <rect class="background" width="1800" height="1160"/>
+
+  <!-- Title -->
+  <text x="65" y="67" class="title">MERN Todo DevOps Platform on DigitalOcean</text>
+  <text x="66" y="100" class="subtitle">Terraform provisioning | Ansible configuration | Docker Compose runtime | Jenkins CD | Prometheus &amp; Grafana observability</text>
+  <rect x="1421" y="41" width="315" height="48" rx="24" fill="#0069ff"/>
+  <text x="1578" y="71" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff">Single-Host Architecture</text>
+
+  <!-- Outer boundary -->
+  <rect x="44" y="130" width="1712" height="980" rx="24" class="boundary"/>
+
+  <!-- ===================== LEFT COLUMN: Entry & Control ===================== -->
+  <rect x="72" y="167" width="245" height="900" rx="20" fill="#eef3fd" class="section"/>
+  <text x="194" y="201" text-anchor="middle" class="layer">Entry &amp; Control</text>
+
+  <!-- Developer node -->
+  <rect x="97" y="218" width="195" height="118" rx="14" class="node-green"/>
+  <text x="194" y="248" text-anchor="middle" class="node-title">Developer</text>
+  <text x="194" y="269" text-anchor="middle" class="node-text">Local Docker container</text>
+  <text x="194" y="288" text-anchor="middle" class="node-text">ubuntu-ansible</text>
+  <rect x="118" y="296" width="154" height="24" rx="10" class="chip"/>
+  <text x="195" y="312" text-anchor="middle" class="small">Windows + Docker Desktop</text>
+
+  <!-- bash.sh node -->
+  <rect x="97" y="358" width="195" height="108" rx="14" class="node-soft"/>
+  <text x="194" y="388" text-anchor="middle" class="node-title">bash.sh</text>
+  <text x="194" y="408" text-anchor="middle" class="node-text">1. Terraform apply</text>
+  <text x="194" y="428" text-anchor="middle" class="node-text">2. Ansible playbook</text>
+  <rect x="118" y="437" width="154" height="24" rx="10" class="chip-manual"/>
+  <text x="195" y="453" text-anchor="middle" class="small">loads .env → GITHUB_TOKEN</text>
+
+  <!-- GitHub node -->
+  <rect x="97" y="490" width="195" height="108" rx="14" class="node-purple"/>
+  <text x="194" y="520" text-anchor="middle" class="node-title">GitHub Repository</text>
+  <text x="194" y="541" text-anchor="middle" class="node-text">ductandev/mern-todo-app</text>
+  <text x="194" y="561" text-anchor="middle" class="port">push main → GitHub Actions</text>
+  <text x="194" y="579" text-anchor="middle" class="port">clone → Ansible</text>
+
+  <!-- DNS node -->
+  <rect x="97" y="622" width="195" height="100" rx="14" class="node-soft"/>
+  <text x="194" y="652" text-anchor="middle" class="node-title">DNS — 123host.vn</text>
+  <text x="194" y="674" text-anchor="middle" class="node-text">api.ductandev.io.vn</text>
+  <rect x="118" y="682" width="154" height="24" rx="10" class="chip-manual"/>
+  <text x="195" y="698" text-anchor="middle" class="small">manual A record → VPS IP</text>
+
+  <!-- Open ports warning -->
+  <rect x="97" y="750" width="195" height="292" rx="12" class="node-red"/>
+  <text x="194" y="778" text-anchor="middle" class="node-title">Open Ports VPS</text>
+  <text x="194" y="800" text-anchor="middle" class="port">:22  SSH</text>
+  <text x="194" y="820" text-anchor="middle" class="port">:80 / :443  App (HTTP/S)</text>
+  <text x="194" y="840" text-anchor="middle" class="port">:3111  React Frontend</text>
+  <text x="194" y="860" text-anchor="middle" class="port">:8386  Express API</text>
+  <text x="194" y="880" text-anchor="middle" class="port">:8080  Jenkins</text>
+  <text x="194" y="900" text-anchor="middle" class="port">:9000  Portainer</text>
+  <text x="194" y="920" text-anchor="middle" class="port">:9090  Prometheus</text>
+  <text x="194" y="940" text-anchor="middle" class="port">:3000  Grafana</text>
+  <text x="194" y="960" text-anchor="middle" class="port">:9100  Node Exporter</text>
+  <text x="194" y="980" text-anchor="middle" class="port">:9216  MongoDB Exporter</text>
+  <text x="194" y="1000" text-anchor="middle" class="port">:50000  Jenkins Agent</text>
+  <text x="194" y="1020" text-anchor="middle" class="port">:27017  MongoDB (internal)</text>
+
+  <!-- ===================== CENTER: DigitalOcean VPS ===================== -->
+  <rect x="345" y="167" width="1038" height="900" rx="22" fill="#f5f9ff" class="do-cloud"/>
+  <text x="372" y="199" class="layer">DigitalOcean VPS</text>
+  <rect x="930" y="178" width="390" height="30" rx="10" class="chip"/>
+  <text x="1125" y="198" text-anchor="middle" class="label">Ubuntu 24.04 x64 | Singapore sgp1 | s-2vcpu-4gb-120gb-intel</text>
+
+  <!-- SECTION 1: Provisioning -->
+  <rect x="370" y="222" width="985" height="165" rx="20" fill="#eef4ff" class="section"/>
+  <text x="390" y="253" class="layer">Provisioning</text>
+
+  <!-- Terraform -->
+  <rect x="400" y="272" width="210" height="90" rx="14" class="node-blue"/>
+  <text x="505" y="303" text-anchor="middle" class="node-title">Terraform</text>
+  <text x="505" y="323" text-anchor="middle" class="node-text">DigitalOcean provider v2.87</text>
+  <text x="505" y="343" text-anchor="middle" class="port">Creates Droplet → output VPS IP</text>
+
+  <path d="M610 317 H648" class="arrow-blue"/>
+  <text x="618" y="311" class="small">IP</text>
+
+  <!-- Ansible -->
+  <rect x="648" y="272" width="210" height="90" rx="14" class="node-green"/>
+  <text x="753" y="303" text-anchor="middle" class="node-title">Ansible</text>
+  <text x="753" y="323" text-anchor="middle" class="node-text">install_vps.yml</text>
+  <text x="753" y="343" text-anchor="middle" class="port">SSH vào VPS → cấu hình toàn bộ</text>
+
+  <!-- Droplet info -->
+  <rect x="898" y="262" width="430" height="110" rx="14" class="node"/>
+  <text x="1113" y="292" text-anchor="middle" class="node-title">DigitalOcean Droplet — terraform-vps</text>
+  <text x="1113" y="314" text-anchor="middle" class="node-text">Region: sgp1 (Singapore) | Image: ubuntu-24-04-x64</text>
+  <text x="1113" y="334" text-anchor="middle" class="node-text">Size: 2 vCPU / 4 GB RAM / 120 GB SSD</text>
+  <text x="1113" y="354" text-anchor="middle" class="port">SSH key: ssh-key-digital-ocean | IP tự cập nhật vào hosts.ini</text>
+
+  <!-- SECTION 2: CI/CD & App -->
+  <rect x="370" y="408" width="985" height="292" rx="20" fill="#f7f4ed" class="section"/>
+  <text x="390" y="439" class="layer">CI/CD &amp; Application Layer</text>
+
+  <!-- GitHub Actions -->
+  <rect x="400" y="468" width="175" height="88" rx="14" class="node-purple"/>
+  <text x="487" y="498" text-anchor="middle" class="node-title">GitHub Actions</text>
+  <text x="487" y="518" text-anchor="middle" class="node-text">Trigger Jenkins deploy</text>
+  <text x="487" y="537" text-anchor="middle" class="port">on push to main</text>
+
+  <path d="M575 512 H614" class="arrow-orange"/>
+
+  <!-- Jenkins -->
+  <rect x="614" y="468" width="175" height="88" rx="14" class="node-orange"/>
+  <text x="701" y="498" text-anchor="middle" class="node-title">Jenkins</text>
+  <text x="701" y="518" text-anchor="middle" class="node-text">git pull + docker-compose</text>
+  <text x="701" y="537" text-anchor="middle" class="port">:8080 / :50000</text>
+
+  <!-- React -->
+  <rect x="830" y="468" width="165" height="88" rx="14" class="node-blue"/>
+  <text x="912" y="498" text-anchor="middle" class="node-title">React Frontend</text>
+  <text x="912" y="518" text-anchor="middle" class="node-text">CRA production build</text>
+  <text x="912" y="537" text-anchor="middle" class="port">:3111 → :3000</text>
+
+  <!-- Express -->
+  <rect x="1040" y="468" width="165" height="88" rx="14" class="node-green"/>
+  <text x="1122" y="498" text-anchor="middle" class="node-title">Express API</text>
+  <text x="1122" y="518" text-anchor="middle" class="node-text">REST + JWT auth</text>
+  <text x="1122" y="537" text-anchor="middle" class="port">:8386</text>
+
+  <path d="M1005 512 H1040" class="arrow"/>
+
+  <!-- Portainer -->
+  <rect x="400" y="590" width="175" height="74" rx="14" class="node-blue"/>
+  <text x="487" y="618" text-anchor="middle" class="node-title">Portainer</text>
+  <text x="487" y="640" text-anchor="middle" class="port">:9000 / :8000</text>
+
+  <!-- Docker Compose runtime chip -->
+  <rect x="614" y="590" width="380" height="74" rx="14" class="chip"/>
+  <text x="804" y="618" text-anchor="middle" class="node-title">Docker Compose Runtime</text>
+  <text x="804" y="641" text-anchor="middle" class="node-text">mongo  |  backend-express  |  frontend-react</text>
+
+  <!-- MongoDB -->
+  <rect x="1040" y="590" width="280" height="74" rx="14" class="node"/>
+  <text x="1180" y="618" text-anchor="middle" class="node-title">MongoDB 7</text>
+  <text x="1180" y="641" text-anchor="middle" class="node-text">Persistent volume | :27017 nội bộ</text>
+
+  <path d="M1122 556 V590" class="arrow"/>
+
+  <!-- SECTION 3: Monitoring -->
+  <rect x="370" y="722" width="985" height="318" rx="20" fill="#edf7f0" class="section"/>
+  <text x="390" y="753" class="layer">Monitoring &amp; Observability</text>
+
+  <!-- Node Exporter -->
+  <rect x="400" y="778" width="175" height="82" rx="14" class="node-green"/>
+  <text x="487" y="806" text-anchor="middle" class="node-title">Node Exporter</text>
+  <text x="487" y="826" text-anchor="middle" class="node-text">CPU, RAM, Disk, Network</text>
+  <text x="487" y="845" text-anchor="middle" class="port">:9100</text>
+
+  <!-- MongoDB Exporter -->
+  <rect x="400" y="898" width="175" height="82" rx="14" class="node-green"/>
+  <text x="487" y="926" text-anchor="middle" class="node-title">MongoDB Exporter</text>
+  <text x="487" y="946" text-anchor="middle" class="node-text">DB connections, ops</text>
+  <text x="487" y="965" text-anchor="middle" class="port">:9216</text>
+
+  <!-- Prometheus -->
+  <rect x="638" y="838" width="185" height="82" rx="14" class="node-orange"/>
+  <text x="730" y="866" text-anchor="middle" class="node-title">Prometheus</text>
+  <text x="730" y="886" text-anchor="middle" class="node-text">Scrape + alert rules</text>
+  <text x="730" y="905" text-anchor="middle" class="port">:9090</text>
+
+  <!-- prometheus.yml chip -->
+  <rect x="638" y="762" width="360" height="55" rx="10" class="chip"/>
+  <text x="818" y="785" text-anchor="middle" class="node-title">prometheus.yml</text>
+  <text x="818" y="804" text-anchor="middle" class="small">/root/mern-todo-app/prometheus/prometheus.yml → mount vào container</text>
+
+  <!-- Grafana -->
+  <rect x="888" y="838" width="175" height="82" rx="14" class="node-soft"/>
+  <text x="975" y="866" text-anchor="middle" class="node-title">Grafana</text>
+  <text x="975" y="886" text-anchor="middle" class="node-text">Dashboard &amp; Visualization</text>
+  <text x="975" y="905" text-anchor="middle" class="port">:3000</text>
+
+  <!-- Monitoring arrows -->
+  <path d="M575 819 H610 V879 H638" class="arrow-blue"/>
+  <path d="M575 939 H610 V899 H638" class="arrow-blue"/>
+  <path d="M823 838 H860 V879 H888" class="arrow-blue"/>
+
+  <!-- ===================== RIGHT COLUMN: Access & Outcomes ===================== -->
+  <rect x="1413" y="167" width="315" height="900" rx="20" fill="#f4f3f8" class="section"/>
+  <text x="1570" y="201" text-anchor="middle" class="layer">Access &amp; Outcomes</text>
+
+  <!-- Public App -->
+  <rect x="1444" y="230" width="252" height="135" rx="14" class="node-soft"/>
+  <text x="1570" y="262" text-anchor="middle" class="node-title">Public Application</text>
+  <text x="1570" y="286" text-anchor="middle" class="node-text">api.ductandev.io.vn</text>
+  <text x="1570" y="306" text-anchor="middle" class="node-text">Frontend :3111</text>
+  <text x="1570" y="326" text-anchor="middle" class="node-text">API :8386</text>
+  <rect x="1484" y="333" width="172" height="24" rx="10" class="chip-manual"/>
+  <text x="1570" y="349" text-anchor="middle" class="small">DNS tay tại 123host.vn</text>
+
+  <!-- DevOps Operator -->
+  <rect x="1444" y="400" width="252" height="130" rx="14" class="node-purple"/>
+  <text x="1570" y="430" text-anchor="middle" class="node-title">DevOps Operator</text>
+  <text x="1570" y="454" text-anchor="middle" class="node-text">Jenkins UI  :8080</text>
+  <text x="1570" y="474" text-anchor="middle" class="node-text">Portainer UI  :9000</text>
+  <text x="1570" y="494" text-anchor="middle" class="node-text">Quản lý container &amp; pipeline</text>
+
+  <!-- Monitoring -->
+  <rect x="1444" y="568" width="252" height="152" rx="14" class="node-green"/>
+  <text x="1570" y="598" text-anchor="middle" class="node-title">Platform Monitoring</text>
+  <text x="1570" y="622" text-anchor="middle" class="node-text">Grafana Dashboard :3000</text>
+  <text x="1570" y="644" text-anchor="middle" class="node-text">Prometheus :9090</text>
+  <text x="1570" y="664" text-anchor="middle" class="node-text">Host metrics (CPU/RAM/Disk)</text>
+  <text x="1570" y="684" text-anchor="middle" class="port">MongoDB metrics</text>
+
+  <!-- Ansible steps -->
+  <rect x="1444" y="758" width="252" height="282" rx="14" class="node-blue"/>
+  <text x="1570" y="786" text-anchor="middle" class="node-title">Ansible Tasks — Thứ tự</text>
+  <text x="1456" y="808" class="node-text">1. Set timezone Asia/Ho_Chi_Minh</text>
+  <text x="1456" y="828" class="node-text">2. Cài docker.io</text>
+  <text x="1456" y="848" class="node-text">3. Cài docker-compose</text>
+  <text x="1456" y="868" class="node-text">4. Clone source từ GitHub</text>
+  <text x="1456" y="888" class="node-text">5. Copy .env lên VPS</text>
+  <text x="1456" y="908" class="node-text">6. docker-compose up -d</text>
+  <text x="1456" y="928" class="node-text">7. Chạy Jenkins  :8080</text>
+  <text x="1456" y="948" class="node-text">8. Chạy Grafana  :3000</text>
+  <text x="1456" y="968" class="node-text">9. Chạy Prometheus  :9090</text>
+  <text x="1456" y="988" class="node-text">10. Node + MongoDB Exporter</text>
+  <text x="1456" y="1008" class="node-text">11. Chạy Portainer  :9000</text>
+
+  <!-- ===================== CROSS-BOUNDARY ARROWS ===================== -->
+  <!-- Developer → bash.sh -->
+  <path d="M194 336 V358" class="arrow"/>
+  <!-- bash.sh → Terraform (via Ansible) -->
+  <path d="M292 410 H355 V317 H400" class="arrow-blue"/>
+  <!-- bash.sh → Ansible -->
+  <path d="M292 430 H340 V340 H648" class="arrow-blue"/>
+  <!-- GitHub → GitHub Actions (CI) -->
+  <path d="M292 530 H355 V512 H400" class="arrow-orange"/>
+  <!-- GitHub → Ansible clone (dashed) -->
+  <path d="M194 598 V622" class="arrow-dash"/>
+  <!-- DNS note arrow -->
+  <path d="M194 722 V750" class="arrow-dash"/>
+
+  <!-- App → Right column (Public App) -->
+  <path d="M1205 512 H1380 V297 H1444" class="arrow"/>
+  <!-- Jenkins → DevOps Operator -->
+  <path d="M701 556 V570 H1380 V465 H1444" class="arrow-dash"/>
+  <!-- Grafana → Monitoring Outcomes -->
+  <path d="M975 920 H1380 V644 H1444" class="arrow-blue"/>
+  <!-- MongoDB → MongoDB Exporter (dashed) -->
+  <path d="M1180 664 V700 H487 V898" class="arrow-dash"/>
+
+  <!-- ===================== LEGEND ===================== -->
+  <rect x="72" y="1082" width="1655" height="18" fill="none"/>
+  <rect x="74" y="1080" width="16" height="16" rx="4" class="node-blue"/>
+  <text x="99" y="1093" class="small">Provisioning / ingress</text>
+  <rect x="260" y="1080" width="16" height="16" rx="4" class="node-orange"/>
+  <text x="285" y="1093" class="small">CI/CD hoặc metrics engine</text>
+  <rect x="500" y="1080" width="16" height="16" rx="4" class="node-green"/>
+  <text x="525" y="1093" class="small">Service được monitor</text>
+  <rect x="680" y="1080" width="16" height="16" rx="4" class="node-purple"/>
+  <text x="705" y="1093" class="small">Automation / người dùng</text>
+  <rect x="900" y="1080" width="16" height="16" rx="4" class="chip-manual"/>
+  <text x="925" y="1093" class="small">Cấu hình tay / bên ngoài</text>
+  <path d="M1160 1088 H1205" class="arrow-blue"/>
+  <text x="1217" y="1093" class="small">Managed flow</text>
+  <path d="M1350 1088 H1395" class="arrow-dash"/>
+  <text x="1407" y="1093" class="small">Kết nối nội bộ / probe</text>
+  <path d="M1550 1088 H1595" class="arrow-orange"/>
+  <text x="1607" y="1093" class="small">CI/CD trigger</text>
+</svg>
