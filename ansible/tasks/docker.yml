@@ -1,0 +1,17 @@
+---
+# Ubuntu 24.04 có sẵn docker.io và docker-compose-v2 trong repo chính thức —
+# cài qua apt là idempotent, không cần curl binary về như trước.
+- name: Cài Docker Engine, Docker Compose v2 và git
+  apt:
+    name:
+      - docker.io
+      - docker-compose-v2
+      - git
+    state: present
+    update_cache: yes
+
+- name: Bật và start Docker daemon
+  systemd:
+    name: docker
+    enabled: yes
+    state: started

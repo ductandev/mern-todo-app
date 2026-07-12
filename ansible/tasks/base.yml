@@ -1,0 +1,35 @@
+---
+- name: Set timezone Asia/Ho_Chi_Minh
+  timezone:
+    name: Asia/Ho_Chi_Minh
+
+- name: Kiểm tra swap file đã tồn tại chưa
+  stat:
+    path: /swapfile
+  register: swap_file
+
+- name: Tạo swap file 2GB (VPS 4GB RAM chạy nhiều container)
+  command: fallocate -l 2G /swapfile
+  when: not swap_file.stat.exists
+
+- name: Phân quyền swap file
+  file:
+    path: /swapfile
+    mode: "0600"
+  when: not swap_file.stat.exists
+
+- name: Format swap
+  command: mkswap /swapfile
+  when: not swap_file.stat.exists
+
+- name: Bật swap
+  command: swapon /swapfile
+  when: not swap_file.stat.exists
+
+- name: Ghi swap vào fstab để giữ sau reboot
+  mount:
+    path: none
+    src: /swapfile
+    fstype: swap
+    opts: sw
+    state: present

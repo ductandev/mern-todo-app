@@ -94,8 +94,8 @@
   <text x="194" y="778" text-anchor="middle" class="node-title">Open Ports VPS</text>
   <text x="194" y="800" text-anchor="middle" class="port">:22  SSH</text>
   <text x="194" y="820" text-anchor="middle" class="port">:80 / :443  App (HTTP/S)</text>
-  <text x="194" y="840" text-anchor="middle" class="port">:3111  React Frontend</text>
-  <text x="194" y="860" text-anchor="middle" class="port">:8386  Express API</text>
+  <text x="194" y="840" text-anchor="middle" class="port">:5173  React Frontend</text>
+  <text x="194" y="860" text-anchor="middle" class="port">:8300  Express API</text>
   <text x="194" y="880" text-anchor="middle" class="port">:8080  Jenkins</text>
   <text x="194" y="900" text-anchor="middle" class="port">:9000  Portainer</text>
   <text x="194" y="920" text-anchor="middle" class="port">:9090  Prometheus</text>
@@ -159,13 +159,13 @@
   <rect x="830" y="468" width="165" height="88" rx="14" class="node-blue"/>
   <text x="912" y="498" text-anchor="middle" class="node-title">React Frontend</text>
   <text x="912" y="518" text-anchor="middle" class="node-text">CRA production build</text>
-  <text x="912" y="537" text-anchor="middle" class="port">:3111 → :3000</text>
+  <text x="912" y="537" text-anchor="middle" class="port">:5173 → :80</text>
 
   <!-- Express -->
   <rect x="1040" y="468" width="165" height="88" rx="14" class="node-green"/>
   <text x="1122" y="498" text-anchor="middle" class="node-title">Express API</text>
   <text x="1122" y="518" text-anchor="middle" class="node-text">REST + JWT auth</text>
-  <text x="1122" y="537" text-anchor="middle" class="port">:8386</text>
+  <text x="1122" y="537" text-anchor="middle" class="port">:8300 → :8386</text>
 
   <path d="M1005 512 H1040" class="arrow"/>
 
@@ -232,8 +232,8 @@
   <rect x="1444" y="230" width="252" height="135" rx="14" class="node-soft"/>
   <text x="1570" y="262" text-anchor="middle" class="node-title">Public Application</text>
   <text x="1570" y="286" text-anchor="middle" class="node-text">api.ductandev.io.vn</text>
-  <text x="1570" y="306" text-anchor="middle" class="node-text">Frontend :3111</text>
-  <text x="1570" y="326" text-anchor="middle" class="node-text">API :8386</text>
+  <text x="1570" y="306" text-anchor="middle" class="node-text">Frontend :5173</text>
+  <text x="1570" y="326" text-anchor="middle" class="node-text">API :8300</text>
   <rect x="1484" y="333" width="172" height="24" rx="10" class="chip-manual"/>
   <text x="1570" y="349" text-anchor="middle" class="small">DNS tay tại 123host.vn</text>
 

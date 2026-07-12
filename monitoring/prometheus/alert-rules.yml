@@ -1,0 +1,65 @@
+groups:
+  - name: mern-todo-infra
+    rules:
+      - alert: NodeExporterDown
+        expr: up{job="node-exporter"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node exporter down"
+          description: "Prometheus không scrape được metrics host từ {{ $labels.instance }}."
+
+      - alert: HighCpuUsage
+        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{job="node-exporter",mode="idle"}[5m])) * 100) > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU cao"
+          description: "CPU trên {{ $labels.instance }} vượt 85% trong 5 phút."
+
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes{job="node-exporter"} / node_memory_MemTotal_bytes{job="node-exporter"})) * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "RAM cao"
+          description: "RAM trên {{ $labels.instance }} vượt 90% trong 5 phút."
+
+      - alert: RootDiskAlmostFull
+        expr: 100 * (1 - (node_filesystem_avail_bytes{job="node-exporter",mountpoint="/",fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{job="node-exporter",mountpoint="/",fstype!~"tmpfs|overlay"})) > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disk gần đầy"
+          description: "Root filesystem trên {{ $labels.instance }} vượt 85%."
+
+      - alert: MongoDBExporterDown
+        expr: up{job="mongodb-exporter"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "MongoDB exporter down"
+          description: "Prometheus không scrape được MongoDB exporter tại {{ $labels.instance }}."
+
+      - alert: MongoDBUnavailable
+        expr: mongodb_up{job="mongodb-exporter"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "MongoDB không truy cập được"
+          description: "MongoDB exporter không kết nối được tới MongoDB."
+
+      - alert: HttpProbeFailed
+        expr: probe_success{job="blackbox-http"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "HTTP probe fail"
+          description: "Blackbox probe fail cho {{ $labels.instance }} — frontend/backend có thể đang down."

@@ -1,0 +1,17 @@
+---
+- name: Kiểm tra version Docker / Compose
+  command: "{{ item }}"
+  loop:
+    - docker --version
+    - docker compose version
+  register: docker_versions
+  changed_when: false
+
+- name: Liệt kê container đang chạy
+  command: docker ps --format "table {{ '{{' }}.Names{{ '}}' }}\t{{ '{{' }}.Status{{ '}}' }}\t{{ '{{' }}.Ports{{ '}}' }}"
+  register: running_containers
+  changed_when: false
+
+- name: Kết quả triển khai
+  debug:
+    msg: "{{ running_containers.stdout_lines }}"

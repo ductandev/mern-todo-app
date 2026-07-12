@@ -1,0 +1,9 @@
+# Copy thành terraform.tfvars và điền giá trị thật.
+# terraform.tfvars đã nằm trong .gitignore — KHÔNG commit.
+
+do_token            = "dop_v1_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+ssh_key_fingerprint = "aa:bb:cc:dd:ee:ff:00:11:22:33:44:55:66:77:88:99"
+
+# Nên giới hạn SSH và các UI quản trị về IP của bạn:
+# allowed_ssh_cidrs = ["x.x.x.x/32"]
+# admin_ui_cidrs    = ["x.x.x.x/32"]

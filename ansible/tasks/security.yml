@@ -1,0 +1,46 @@
+---
+- name: Cài UFW và Fail2Ban
+  apt:
+    name:
+      - ufw
+      - fail2ban
+    state: present
+
+- name: UFW - cho phép các port khai báo
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop: "{{ ufw_allowed_ports }}"
+
+- name: UFW - bật firewall, mặc định deny inbound
+  ufw:
+    state: enabled
+    policy: deny
+    direction: incoming
+
+- name: Fail2Ban - bật jail sshd chống brute-force
+  copy:
+    dest: /etc/fail2ban/jail.local
+    mode: "0644"
+    content: |
+      [sshd]
+      enabled = true
+      maxretry = 5
+      findtime = 10m
+      bantime = 1h
+  notify: restart fail2ban
+
+- name: Bật và start Fail2Ban
+  systemd:
+    name: fail2ban
+    enabled: yes
+    state: started
+
+- name: SSH hardening - tắt đăng nhập bằng password (chỉ cho phép SSH key)
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?PasswordAuthentication"
+    line: "PasswordAuthentication no"
+    validate: "sshd -t -f %s"
+  notify: restart sshd

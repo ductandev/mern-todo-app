@@ -1,0 +1,16 @@
+---
+- name: Clone / cập nhật source code (repo public, không cần token)
+  git:
+    repo: "{{ project_repo_url }}"
+    dest: "{{ app_dir }}"
+    version: "{{ project_repo_version }}"
+    force: yes
+
+- name: Copy file .env cho backend/docker-compose lên VPS
+  copy:
+    # /root ở đây là đường dẫn trong Docker container chạy pipeline
+    # (do mount ./:/root), không phải máy Windows.
+    src: /root/.env
+    dest: "{{ app_env_file }}"
+    mode: "0600"
+  no_log: true

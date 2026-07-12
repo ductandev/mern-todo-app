@@ -1,4 +1,3 @@
-version: "368"
 services:
   mongo:
     container_name: mongo
@@ -9,8 +8,12 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     volumes:
       - mongo-data:/data/db
+    # Chỉ bind localhost — backend và exporter truy cập qua Docker network,
+    # không expose MongoDB ra internet.
     ports:
       - "127.0.0.1:27017:27017"
+    networks:
+      - mern-network
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -26,31 +29,59 @@ services:
       - ./.env
     depends_on:
       mongo:
-        # đợi MongoDB sẵn sàng accept connection rồi Backend mới start. nếu ko có điều kiện này, Backend có thể start trước → connect fail → restart loop → may rủi.
+        # đợi MongoDB sẵn sàng accept connection rồi Backend mới start,
+        # tránh backend connect fail → restart loop.
         condition: service_healthy
     ports:
-      - 8300:8386
+      - "8300:8386"
+    networks:
+      - mern-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8386/api/test/buildTest >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   frontend-react:
     container_name: frontend-react
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        # CRA nhúng biến này lúc build — docker compose đọc từ .env gốc
+        REACT_APP_API_URL: ${REACT_APP_API_URL}
     restart: unless-stopped
     ports:
-      - 5173:80
+      - "5173:80"
+    networks:
+      - mern-network
+    depends_on:
+      - backend-express
 
   nginx:
-    image: "jc21/nginx-proxy-manager:latest"
+    container_name: nginx-proxy-manager
+    image: jc21/nginx-proxy-manager:2.11.3
     restart: unless-stopped
     ports:
       - "80:80"
       - "81:81"
       - "443:443"
     volumes:
-      - ./data:/data
-      - ./letsencrypt:/etc/letsencrypt
+      - npm-data:/data
+      - npm-letsencrypt:/etc/letsencrypt
+    networks:
+      - mern-network
     depends_on:
       - backend-express
       - frontend-react
 
 volumes:
   mongo-data:
+  npm-data:
+  npm-letsencrypt:
+
+networks:
+  # Đặt tên cố định để stack monitoring join vào scrape mongo/backend
+  mern-network:
+    name: mern-network
+    driver: bridge

@@ -1,0 +1,16 @@
+---
+- name: Start Portainer
+  command:
+    argv:
+      - docker
+      - compose
+      - -f
+      - docker-compose.portainer.yml
+      - up
+      - -d
+    chdir: "{{ portainer_dir }}"
+  register: portainer_up
+  changed_when: >
+    'Created' in portainer_up.stderr or
+    'Started' in portainer_up.stderr or
+    'Recreated' in portainer_up.stderr

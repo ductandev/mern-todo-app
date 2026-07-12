@@ -1,44 +1,98 @@
-name: deploy
+# CI/CD pipeline:
+#   GitHub Actions = CI (install deps, test, build) — build lỗi thì KHÔNG deploy.
+#   Jenkins        = CD (git pull + docker compose up -d --build toàn bộ app).
+# Actions chỉ trigger Jenkins qua API, không SSH thẳng vào VPS.
+name: ci-cd
+
 on:
   push:
     branches: [main]
     paths:
       - "frontend/**"
+      - "backend/**"
+      - "docker-compose.yml"
       - ".github/workflows/main.yml"
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  ci-backend:
+    name: CI Backend (Express)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
     steps:
-      - name: Deploy frontend on VPS
-        uses: appleboy/ssh-action@v1.0.3
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ vars.VPS_USER }}
-          key: ${{ secrets.VPS_KEY }}
-          port: ${{ secrets.VPS_PORT }}
-          script: |
-            cd /root//mern-todo-app
-            git pull
-            docker-compose up -d --build --remove-orphans frontend-react
-            docker images -f "dangling=true" -q | xargs --no-run-if-empty docker rmi
+          node-version: 20
+          cache: yarn
+          cache-dependency-path: backend/yarn.lock
 
-#================================
-#        Ghi chú thêm
-#================================
-# ✅ chỉ chạy khi FE thay đổi hoặc file workflow này thay đổi
-# paths:
-#   - "frontend/**"
-#   - ".github/workflows/main.yml"
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
-# ✅ Stop
-# docker-compose stop frontend-react
+      - name: Syntax check
+        run: yarn test
 
-# ✅ Start lại (không rebuild)
-# docker-compose start frontend-react
+  ci-frontend:
+    name: CI Frontend (React)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
 
-# ✅ Stop + xóa container (chỉ service đó)
-# docker-compose rm -sf frontend-react
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
-# ✅ Rebuild + start lại
-#docker-compose up -d --build frontend-react
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test -- --watchAll=false --passWithNoTests
+
+      - name: Production build
+        env:
+          REACT_APP_API_URL: https://api.ductandev.io.vn/api
+          CI: "true"
+        run: npm run build
+
+  deploy:
+    name: Trigger Jenkins deploy
+    runs-on: ubuntu-latest
+    needs: [ci-backend, ci-frontend]
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    steps:
+      - name: Trigger Jenkins job
+        env:
+          JENKINS_URL: ${{ secrets.JENKINS_URL }}
+          JENKINS_USER: ${{ secrets.JENKINS_USER }}
+          JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
+          JENKINS_JOB: deploy-mern-todo
+          GIT_COMMIT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          : "${JENKINS_URL:?Thiếu secret JENKINS_URL}"
+          : "${JENKINS_USER:?Thiếu secret JENKINS_USER}"
+          : "${JENKINS_TOKEN:?Thiếu secret JENKINS_TOKEN}"
+
+          jenkins_url="${JENKINS_URL%/}"
+
+          # Lấy CSRF crumb rồi trigger job kèm commit SHA để deploy đúng revision
+          crumb_header="$(curl -fsS -u "${JENKINS_USER}:${JENKINS_TOKEN}" \
+            "${jenkins_url}/crumbIssuer/api/json" \
+            | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["crumbRequestField"] + ":" + d["crumb"])')"
+
+          curl -fsS -X POST \
+            -u "${JENKINS_USER}:${JENKINS_TOKEN}" \
+            -H "${crumb_header}" \
+            --data-urlencode "GIT_COMMIT_SHA=${GIT_COMMIT_SHA}" \
+            "${jenkins_url}/job/${JENKINS_JOB}/buildWithParameters"
+
+          echo "Đã trigger Jenkins job ${JENKINS_JOB} với commit ${GIT_COMMIT_SHA}"

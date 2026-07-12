@@ -1,12 +1,20 @@
-FROM node:24
+FROM node:20-alpine
 
-WORKDIR /backend-express
+WORKDIR /app
 
-COPY package*.json ./
+# bcrypt là native addon — cần toolchain để build trên alpine
+RUN apk add --no-cache python3 make g++
 
-RUN yarn config set network-timeout 3000000
-RUN yarn install
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile --production && yarn cache clean
 
 COPY . .
 
-CMD [ "yarn","start"]
+# Chạy bằng user không phải root
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup \
+    && chown -R appuser:appgroup /app
+USER appuser
+
+EXPOSE 8386
+
+CMD ["node", "index.js"]

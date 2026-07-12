@@ -1,0 +1,30 @@
+---
+- name: Start Jenkins (có volume persist config/jobs)
+  command:
+    argv:
+      - docker
+      - compose
+      - -f
+      - docker-compose.ci-cd.yml
+      - up
+      - -d
+    chdir: "{{ ci_cd_dir }}"
+  register: jenkins_up
+  changed_when: >
+    'Created' in jenkins_up.stderr or
+    'Started' in jenkins_up.stderr or
+    'Recreated' in jenkins_up.stderr
+
+- name: Lấy initial admin password của Jenkins (chỉ có ở lần cài đầu)
+  command: docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+  register: jenkins_initial_password
+  changed_when: false
+  failed_when: false
+  retries: 10
+  delay: 15
+  until: jenkins_initial_password.rc == 0 or 'No such file' in (jenkins_initial_password.stderr | default(''))
+
+- name: Hiển thị initial admin password của Jenkins
+  debug:
+    msg: "Jenkins initial admin password: {{ jenkins_initial_password.stdout }}"
+  when: jenkins_initial_password.rc == 0

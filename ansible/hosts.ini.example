@@ -1,0 +1,4 @@
+# Copy thành hosts.ini và điền IP VPS thật (bash.sh tự sinh file này từ Terraform output).
+# hosts.ini đã nằm trong .gitignore — KHÔNG commit IP thật lên git.
+[danh_sach_host]
+<vps-public-ip> ansible_user=root ansible_private_key_file=./ssh-key-digital-ocean

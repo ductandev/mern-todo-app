@@ -1,0 +1,17 @@
+---
+- name: Build và start app stack (mongo, backend, frontend, nginx-proxy-manager)
+  command:
+    argv:
+      - docker
+      - compose
+      - up
+      - -d
+      - --build
+      - --remove-orphans
+    chdir: "{{ app_dir }}"
+  register: app_up
+  changed_when: >
+    'Created' in app_up.stderr or
+    'Started' in app_up.stderr or
+    'Recreated' in app_up.stderr or
+    'Built' in app_up.stderr

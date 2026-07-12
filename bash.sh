@@ -1,90 +1,89 @@
 #!/bin/bash
+# Pipeline provision + deploy toàn bộ hệ thống:
+#   1. Terraform tạo VPS DigitalOcean
+#   2. Ansible cấu hình VPS và deploy app + monitoring + Jenkins + Portainer
+# Chạy trong container Ubuntu (xem README).
+set -euo pipefail
 start=$(date +'%s')
 
-# Load biến môi trường từ file .env (GITHUB_TOKEN, DIGITALOCEAN_TOKEN...)
-# File .env nằm cùng thư mục với bash.sh, không được commit lên git
+TERRAFORM_VERSION="1.15.5"
+
+# Load biến môi trường từ file .env (DIGITALOCEAN_TOKEN, ALERTMANAGER_*...)
+# File .env nằm cùng thư mục với bash.sh, không được commit lên git.
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 if [ -f "$SCRIPT_DIR/.env" ]; then
-  export $(grep -v '^#' "$SCRIPT_DIR/.env" | xargs)
+  set -a
+  # shellcheck disable=SC1091
+  . "$SCRIPT_DIR/.env"
+  set +a
   echo "✅ Đã load .env"
 else
-  echo "⚠️  Không tìm thấy file .env tại $SCRIPT_DIR"
-fi
-
-# Kiểm tra GITHUB_TOKEN bắt buộc phải có
-if [ -z "$GITHUB_TOKEN" ]; then
-  echo "❌ GITHUB_TOKEN chưa được set! Thêm vào file .env rồi chạy lại"
+  echo "❌ Không tìm thấy file .env tại $SCRIPT_DIR — copy .env.example thành .env rồi chạy lại"
   exit 1
 fi
 
-# Tắt interactive prompt của apt (tránh bị hỏi timezone, keyboard... khi cài package)
+# Terraform đọc token từ TF_VAR_do_token (hoặc terraform.tfvars nếu có)
+if [ -n "${DIGITALOCEAN_TOKEN:-}" ]; then
+  export TF_VAR_do_token="$DIGITALOCEAN_TOKEN"
+fi
+
+# Tắt interactive prompt của apt (tránh bị hỏi timezone, keyboard...)
 export DEBIAN_FRONTEND=noninteractive
 
 # Tắt xác nhận SSH fingerprint khi kết nối tới VPS mới.
-# Dùng env var thay vì ansible.cfg vì thư mục bị world-writable (do docker mount) nên ansible.cfg bị ignore.
+# Dùng env var thay vì ansible.cfg vì thư mục bị world-writable (do docker mount)
+# nên ansible.cfg bị ignore.
 export ANSIBLE_HOST_KEY_CHECKING=False
 
-echo "Begin!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-echo "Begin install systems"
-
+echo "==== 1/3 Cài công cụ ===="
 apt update
-sleep 1
+apt install -y unzip wget openssh-client ansible
 
-apt install -y unzip
-sleep 1
+echo "==== 2/3 Terraform tạo VPS ===="
+cd "$SCRIPT_DIR/terraform"
 
-apt install -y wget
-sleep 1
-
-cd terraform
-
-# =================1️⃣ Download Terraform binary=============
-wget https://releases.hashicorp.com/terraform/1.15.5/terraform_1.15.5_linux_amd64.zip
-sleep 1
-
-unzip -o terraform_1.15.5_linux_amd64.zip
-sleep 1
-
-mv terraform /usr/local/bin/
-sleep 1
+if ! command -v terraform >/dev/null 2>&1; then
+  wget -q "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
+  unzip -o "terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
+  mv terraform /usr/local/bin/
+fi
 
 terraform -version
 terraform init
 terraform apply -auto-approve
 
-# Lấy IP từ terraform output và ghi vào hosts.ini
+# Lấy IP từ terraform output và ghi vào hosts.ini (file này không commit)
 VPS_IP=$(terraform output -raw vps_ip)
 echo "VPS IP: $VPS_IP"
 
-HOSTS_FILE="../ansible/hosts.ini"
+HOSTS_FILE="$SCRIPT_DIR/ansible/hosts.ini"
 cat > "$HOSTS_FILE" <<EOF
 [danh_sach_host]
 $VPS_IP ansible_user=root ansible_private_key_file=./ssh-key-digital-ocean
 EOF
-echo "✅  Đã cập nhật $HOSTS_FILE với IP: $VPS_IP"
+echo "✅ Đã cập nhật $HOSTS_FILE"
 
-# ====================2️⃣ Install Ansible ====================
-# Chờ VPS khởi động xong trước khi chạy ansible
-echo "✅  VPS đã sẵn sàng..."
-sleep 5
+echo "==== 3/3 Ansible cấu hình VPS ===="
+# Tránh Ansible từ chối đọc ansible.cfg do thư mục world-writable
+chmod 755 "$SCRIPT_DIR/ansible" || true
+cd "$SCRIPT_DIR/ansible"
 
-cd ../
-# tránh Ansible phát hiện world-writable 777 từ chối đọc ansible.cfg
-chmod 755 /root/ansible
-echo "✅  Cài đặt Ansible..."
-apt install ansible -y
-sleep 1
-ansible --version
+# SSH key phải có permission 600
+chmod 600 ./ssh-key-digital-ocean || true
 
-cd ./ansible
-pwd
+# Chờ SSH sẵn sàng thay vì sleep mù
+echo "⏳ Chờ VPS mở cổng SSH..."
+for i in $(seq 1 30); do
+  if ansible all -i hosts.ini -m ping >/dev/null 2>&1; then
+    echo "✅ VPS đã sẵn sàng"
+    break
+  fi
+  [ "$i" -eq 30 ] && { echo "❌ Không SSH được vào VPS sau 5 phút"; exit 1; }
+  sleep 10
+done
 
-# Đảm bảo SSH key đúng permission (600), nếu không SSH sẽ bị từ chối
-# chmod 600 ~/.ssh/ssh-key-digital-ocean
-
-echo "✅  Bắt đầu chạy lệnh Ansible..."
-ansible all -i hosts.ini -m ping
-ansible-playbook -i hosts.ini install_vps.yml --extra-vars "github_token=$GITHUB_TOKEN"
+ansible-playbook -i hosts.ini install_vps.yml
 
 end=$(date +'%s')
-echo "Tong thoi gian chay: $((end - start)) giay"
+echo "🎉 Hoàn tất! Tổng thời gian: $((end - start)) giây"
+echo "Nhớ trỏ DNS A record về IP mới: $VPS_IP"
