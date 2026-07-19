@@ -39,3 +39,4 @@ LICENSE.txt
 .wget-hsts
 bash_backup*
 /frontend/yarn.lock
+history_vps.md
